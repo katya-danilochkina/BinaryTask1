@@ -71,3 +71,31 @@ When there are more than one common ancestors that can be used for three-way mer
 
 — Linus Torvalds[47]
 octopus: This is the default when merging more than two heads.
+
+
+
+Data structures
+
+Git's primitives are not inherently a source code management (SCM) system. Torvalds explains,[48]
+
+In many ways you can just see git as a filesystem – it's content-addressable, and it has a notion of versioning, but I really really designed it coming at the problem from the viewpoint of a filesystem person (hey, kernels is what I do), and I actually have absolutely zero interest in creating a traditional SCM system.
+
+From this initial design approach, Git has developed the full set of features expected of a traditional SCM,[30] with features mostly being created as needed, then refined and extended over time.
+
+
+Some data flows and storage levels in the Git revision control system.
+Git has two data structures: a mutable index (also called stage or cache) that caches information about the working directory and the next revision to be committed; and an immutable, append-only object database.
+
+The index serves as connection point between the object database and the working tree.
+
+The object database contains four types of objects:
+
+A blob (binary large object) is the content of a file. Blobs have no proper file name, time stamps, or other metadata. (A blob's name internally is a hash of its content.)
+A tree object is the equivalent of a directory. It contains a list of file names, each with some type bits and a reference to a blob or tree object that is that file, symbolic link, or directory's contents. These objects are a snapshot of the source tree. (In whole, this comprises a Merkle Tree, meaning that only a single hash for the root tree is sufficient and actually used in commits to exactly pinpoint to the exact state of whole tree structures of any number of sub-directories and files.)
+A commit object links tree objects together into a history. It contains the name of a tree object (of the top-level source directory), a time stamp, a log message, and the names of zero or more parent commit objects.
+A tag object is a container that contains a reference to another object and can hold added meta-data related to another object. Most commonly, it is used to store a digital signature of a commit object corresponding to a particular release of the data being tracked by Git.
+Each object is identified by a SHA-1 hash of its contents. Git computes the hash, and uses this value for the object's name. The object is put into a directory matching the first two characters of its hash. The rest of the hash is used as the file name for that object.
+
+Git stores each revision of a file as a unique blob. The relationships between the blobs can be found through examining the tree and commit objects. Newly added objects are stored in their entirety using zlib compression. This can consume a large amount of disk space quickly, so objects can be combined into packs, which use delta compression to save space, storing blobs as their changes relative to other blobs.
+
+Git servers typically listen on TCP port 9418.[49]
