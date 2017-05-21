@@ -62,25 +62,24 @@ Another property of Git is that it snapshots directory trees of files. The earli
 Implicit revision relationships have some significant consequences:
 
 It is slightly more costly to examine the change history of one file than the whole project.[41] To obtain a history of changes affecting a given file, Git must walk the global history and then determine whether each change modified that file. This method of examining history does, however, let Git produce with equal efficiency a single history showing the changes to an arbitrary set of files. For example, a subdirectory of the source tree plus an associated global header file is a very common case.
-Renames are handled implicitly rather than explicitly. A common complaint with CVS is that it uses the name of a file to identify its revision history, so moving or renaming a file is not possible without either interrupting its history, or renaming the history and thereby making the history inaccurate. Most post-CVS revision control systems solve this by giving a file a unique long-lived name (analogous to an inode number) that survives renaming. Git does not record such an identifier, and this is claimed as an advantage.[42][43] Source code files are sometimes split or merged, or simply renamed,[44] and recording this as a simple rename would freeze an inaccurate description of what happened in the (immutable) history. Git addresses the issue by detecting renames while browsing the history of snapshots rather than recording it when making the snapshot.[45] (Briefly, given a file in revision N, a file of the same name in revision N−1 is its default ancestor. However, when there is no like-named file in revision N−1, Git searches for a file that existed only in revision N−1 and is very similar to the new file.) However, it does require more central processing unit (CPU) intensive work every time history is reviewed, and several options to adjust the heuristics. This mechanism does not always work; sometimes a file that is renamed with changes in the same commit is read as a deletion of the old file and the creation of a new file. Developers can work around this limitation by committing the rename and changes separately.[citation needed]
-Git implements several merging strategies; a non-default can be selected at merge time:[46]
+Renames are handled implicitly rather than explicitly. A common complaint with CVS is that it uses the name of a file to identify its revision history, so moving or renaming a file is not possible without either interrupting its history, or renaming the history and thereby making the history inaccurate. Most post-CVS revision control systems solve this by giving a file a unique long-lived name (analogous to an inode number) that survives renaming. Git does not record such an identifier, and this is claimed as an advantage.[42][43] Source code files are sometimes split or merged, or simply renamed,[44] and recording this as a simple rename would freeze an inaccurate description of what happened in the (immutable) history. Git addresses the issue by detecting renames while browsing the history of snapshots rather than recording it when making the snapshot. (Briefly, given a file in revision N, a file of the same name in revision N−1 is its default ancestor. However, when there is no like-named file in revision N−1, Git searches for a file that existed only in revision N−1 and is very similar to the new file.) However, it does require more central processing unit (CPU) intensive work every time history is reviewed, and several options to adjust the heuristics. This mechanism does not always work; sometimes a file that is renamed with changes in the same commit is read as a deletion of the old file and the creation of a new file. Developers can work around this limitation by committing the rename and changes separately.
+Git implements several merging strategies; a non-default can be selected at merge time:
 
 resolve: the traditional three-way merge algorithm.
 recursive: This is the default when pulling or merging one branch, and is a variant of the three-way merge algorithm.
 When there are more than one common ancestors that can be used for three-way merge, it creates a merged tree of the common ancestors and uses that as the reference tree for the three-way merge. This has been reported to result in fewer merge conflicts without causing mis-merges by tests done on prior merge commits taken from Linux 2.6 kernel development history. Also, this can detect and handle merges involving renames.
 
-— Linus Torvalds[47]
+— Linus Torvalds
 octopus: This is the default when merging more than two heads.
-
 
 
 Data structures
 
-Git's primitives are not inherently a source code management (SCM) system. Torvalds explains,[48]
+Git's primitives are not inherently a source code management (SCM) system. Torvalds explains
 
 In many ways you can just see git as a filesystem – it's content-addressable, and it has a notion of versioning, but I really really designed it coming at the problem from the viewpoint of a filesystem person (hey, kernels is what I do), and I actually have absolutely zero interest in creating a traditional SCM system.
 
-From this initial design approach, Git has developed the full set of features expected of a traditional SCM,[30] with features mostly being created as needed, then refined and extended over time.
+From this initial design approach, Git has developed the full set of features expected of a traditional SCM, with features mostly being created as needed, then refined and extended over time.
 
 
 Some data flows and storage levels in the Git revision control system.
@@ -98,4 +97,4 @@ Each object is identified by a SHA-1 hash of its contents. Git computes the hash
 
 Git stores each revision of a file as a unique blob. The relationships between the blobs can be found through examining the tree and commit objects. Newly added objects are stored in their entirety using zlib compression. This can consume a large amount of disk space quickly, so objects can be combined into packs, which use delta compression to save space, storing blobs as their changes relative to other blobs.
 
-Git servers typically listen on TCP port 9418.[49]
+Git servers typically listen on TCP port 9418.
